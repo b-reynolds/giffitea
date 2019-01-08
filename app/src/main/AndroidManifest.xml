@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="io.benreynolds.giffit">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".GiffitApplication"
         android:allowBackup="true"
