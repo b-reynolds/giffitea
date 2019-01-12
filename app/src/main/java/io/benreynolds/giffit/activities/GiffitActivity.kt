@@ -6,15 +6,15 @@ import io.benreynolds.giffit.R
 import io.benreynolds.giffit.fragments.ImageSelectionFragment
 
 class GiffitActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    setContentView(R.layout.activity_main)
 
-        if (savedInstanceState == null) {
-            supportFragmentManager
-                .beginTransaction()
-                .add(R.id.clRoot, ImageSelectionFragment())
-                .commit()
-        }
+    if (savedInstanceState == null) {
+      supportFragmentManager
+        .beginTransaction()
+        .add(R.id.clRoot, ImageSelectionFragment())
+        .commit()
     }
+  }
 }
