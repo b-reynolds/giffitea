@@ -17,18 +17,21 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import io.benreynolds.giffit.CallbackManager
 import io.benreynolds.giffit.R
 import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import timber.log.Timber
 import java.io.File
-import java.util.*
 
 private const val REQUEST_GALLERY_IMAGE = 1
 private const val REQUEST_EXTERNAL_STORAGE_PERMISSIONS = 2
 
+private const val CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED = 1
+private const val CB_EXTERNAL_STORAGE_PERMISSIONS_DENIED = 2
+
 class ImageSelectionFragment : Fragment() {
-  private val onPermissionGrantedCallbacks = mutableMapOf<String, ArrayDeque<() -> Unit>>()
+  private val callBackManager = CallbackManager<Int>()
   private lateinit var viewModel: ImageSelectionViewModel
 
   override fun onAttach(context: Context) {
@@ -62,21 +65,13 @@ class ImageSelectionFragment : Fragment() {
 
     when (requestCode) {
       REQUEST_EXTERNAL_STORAGE_PERMISSIONS -> {
-        val granted = results.firstOrNull() == PackageManager.PERMISSION_GRANTED
-        Timber.d("READ_EXTERNAL_STORAGE permission request granted: '$granted'")
-
-        onPermissionGrantedCallbacks[READ_EXTERNAL_STORAGE]?.let { callbacks ->
-          if (granted) {
-            while (callbacks.isNotEmpty()) {
-              val callback = callbacks.poll()
-              Timber.d("Invoking callback '$callback'...")
-              callback.invoke()
-            }
+        callBackManager.invokeAll(
+          if (results.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
+            CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED
           } else {
-            Timber.d("Clearing callback queue...")
-            callbacks.clear()
+            CB_EXTERNAL_STORAGE_PERMISSIONS_DENIED
           }
-        }
+        )
       }
     }
   }
@@ -104,10 +99,13 @@ class ImageSelectionFragment : Fragment() {
   private fun requestImageFromGallery() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (isPermissionRequired(READ_EXTERNAL_STORAGE)) {
-        requestPermission(READ_EXTERNAL_STORAGE) {
-          requestImageFromGallery()
+        if (callBackManager[CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED].isNullOrEmpty()) {
+          callBackManager.add(CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED) {
+            requestImageFromGallery()
+          }
         }
 
+        requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), REQUEST_EXTERNAL_STORAGE_PERMISSIONS)
         return
       }
     }
@@ -121,20 +119,10 @@ class ImageSelectionFragment : Fragment() {
     )
   }
 
-  private fun requestPermission(permission: String, onPermissionGranted: () -> Unit) {
-    if (!onPermissionGrantedCallbacks.containsKey(permission)) {
-      onPermissionGrantedCallbacks[permission] = ArrayDeque()
-    }
-
-    onPermissionGrantedCallbacks[permission]?.add { onPermissionGranted.invoke() }
-    requestPermissions(arrayOf(permission), REQUEST_EXTERNAL_STORAGE_PERMISSIONS)
-  }
-
   @TargetApi(Build.VERSION_CODES.M)
   private fun isPermissionRequired(permission: String): Boolean {
     return requireContext().checkSelfPermission(permission) == PackageManager.PERMISSION_DENIED
   }
-
 
   private fun Uri.getFile(): File {
     val cursor = requireContext().contentResolver.query(this, null, null, null, null)
