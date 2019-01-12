@@ -3,7 +3,7 @@ package io.benreynolds.giffit
 import java.util.*
 
 /**
- * Polls each element within the [] the given [action] on each element within the [Deque].
+ * Polls each element within the [Queue] passing them to the specified [action].
  */
 fun <T> Queue<T>.pollEach(action: (T) -> Unit) {
   for (i in 0 until size) {
