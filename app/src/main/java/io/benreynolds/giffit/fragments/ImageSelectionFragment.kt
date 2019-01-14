@@ -25,6 +25,8 @@ import timber.log.Timber
 
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED = 1
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_DENIED = 2
+private const val CB_IMAGE_SELECTED = 3
+private const val CB_IMAGE_SELECTION_FAILED = 4
 private const val RC_PICK_GALLERY_IMAGE = 1
 private const val RC_EXTERNAL_STORAGE_PERMISSIONS = 2
 
@@ -55,7 +57,7 @@ class ImageSelectionFragment : Fragment() {
 
     if (requireContext().packageManager?.hasSystemFeature(PackageManager.FEATURE_CAMERA) == true) {
       fabCamera.setOnClickListener { requestImageFromCamera() }
-      fabCamera.hide()
+      fabCamera.show()
     }
   }
 

@@ -3,4 +3,5 @@
     <string name="reason_external_store_permissions">This app requires external storage permissions to allow you to select an image from your device.</string>
     <string name="button_retry_permission_request">OK</string>
     <string name="button_cancel_permission_request">Cancel</string>
+    <string name="text_view_select_image">Choose an image</string>
 </resources>

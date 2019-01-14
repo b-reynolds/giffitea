@@ -16,7 +16,7 @@ fun Uri.getFile(context: Context): File? {
     ?.use { cursor ->
       cursor.moveToFirst()
       val columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-      return if (columnIndex >= 0) {
+      return if (columnIndex == -1) {
         null
       } else {
         File(cursor.getString(columnIndex))
