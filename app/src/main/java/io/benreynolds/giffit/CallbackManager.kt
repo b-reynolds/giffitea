@@ -1,5 +1,6 @@
 package io.benreynolds.giffit
 
+import io.benreynolds.giffit.extensions.pollEach
 import java.util.LinkedList
 import java.util.Queue
 

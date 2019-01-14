@@ -1,4 +1,4 @@
-package io.benreynolds.giffit
+package io.benreynolds.giffit.extensions
 
 import java.util.*
 

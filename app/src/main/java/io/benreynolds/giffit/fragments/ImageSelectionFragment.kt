@@ -7,10 +7,8 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_DENIED
 import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,10 +18,10 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import io.benreynolds.giffit.CallbackManager
 import io.benreynolds.giffit.R
+import io.benreynolds.giffit.extensions.getFile
 import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import timber.log.Timber
-import java.io.File
 
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED = 1
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_DENIED = 2
@@ -88,16 +86,17 @@ class ImageSelectionFragment : Fragment() {
             return
           }
 
-          imageView.setImageBitmap(
-            BitmapFactory.decodeFile(resultData.getFile().absolutePath)
-          )
+          resultData.getFile(requireContext())?.let { imageFile ->
+            imageView.setImageBitmap(
+              BitmapFactory.decodeFile(imageFile.absolutePath)
+            )
+          }
         }
       }
     }
   }
 
   private fun requestImageFromGallery() {
-
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       val context = requireContext()
       if (context.checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_DENIED) {
@@ -132,14 +131,5 @@ class ImageSelectionFragment : Fragment() {
     }
 
     startActivityForResult(pickImageIntent, RC_PICK_GALLERY_IMAGE)
-  }
-
-  private fun Uri.getFile(): File {
-    val cursor = requireContext().contentResolver.query(this, null, null, null, null)
-      ?: return File(path)
-    cursor.use {
-      it.moveToFirst()
-      return File(it.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)))
-    }
   }
 }
