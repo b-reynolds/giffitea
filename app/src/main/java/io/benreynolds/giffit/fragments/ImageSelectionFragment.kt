@@ -6,12 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.PERMISSION_DENIED
-import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -21,18 +23,18 @@ import io.benreynolds.giffit.R
 import io.benreynolds.giffit.extensions.getFile
 import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
-import timber.log.Timber
+import java.io.File
 
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_GRANTED = 1
 private const val CB_EXTERNAL_STORAGE_PERMISSIONS_DENIED = 2
-private const val CB_IMAGE_SELECTED = 3
-private const val CB_IMAGE_SELECTION_FAILED = 4
 private const val RC_PICK_GALLERY_IMAGE = 1
 private const val RC_EXTERNAL_STORAGE_PERMISSIONS = 2
+private const val RC_CAPTURE_IMAGE = 3
 
 class ImageSelectionFragment : Fragment() {
   private val callBackManager = CallbackManager<Int>()
   private lateinit var viewModel: ImageSelectionViewModel
+  private var capturedImage: File? = null
 
   override fun onAttach(context: Context) {
     super.onAttach(context)
@@ -50,15 +52,17 @@ class ImageSelectionFragment : Fragment() {
     return inflater.inflate(R.layout.fragment_image_selection, container, false)
   }
 
-  override fun onActivityCreated(savedInstanceState: Bundle?) {
-    super.onActivityCreated(savedInstanceState)
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    fabGallery.setOnClickListener { requestImageFromGallery() }
-
-    if (requireContext().packageManager?.hasSystemFeature(PackageManager.FEATURE_CAMERA) == true) {
+    if (requireContext().packageManager?.hasSystemFeature(PackageManager.FEATURE_CAMERA) != true) {
+      fabCamera.hide()
+    } else {
       fabCamera.setOnClickListener { requestImageFromCamera() }
       fabCamera.show()
     }
+
+    fabGallery.setOnClickListener { requestImageFromGallery() }
   }
 
   override fun onRequestPermissionsResult(
@@ -84,27 +88,35 @@ class ImageSelectionFragment : Fragment() {
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     super.onActivityResult(requestCode, resultCode, data)
 
-    if (requestCode == RC_PICK_GALLERY_IMAGE) {
-      when (resultCode) {
-        RESULT_OK -> {
-          val resultData = data?.data
-          if (resultData == null) {
-            Timber.e("RC_PICK_GALLERY_IMAGE returned $resultCode but data was null")
-            return
-          }
-
-          resultData.getFile(requireContext())?.let { imageFile ->
-            imageView.setImageBitmap(
-              BitmapFactory.decodeFile(imageFile.absolutePath)
-            )
-          }
-        }
-      }
+    val context = requireContext()
+    if (requestCode == RC_PICK_GALLERY_IMAGE && resultCode == RESULT_OK && data != null) {
+      data.data?.getFile(context)?.let { viewModel.onImageSelected(it) }
+    } else if (requestCode == RC_CAPTURE_IMAGE && resultCode == RESULT_OK) {
+      capturedImage?.let { viewModel.onImageSelected(it) }
     }
   }
 
   private fun requestImageFromCamera() {
+    val context = requireContext()
+    val captureImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    if (captureImageIntent.resolveActivity(context.packageManager) == null) {
+      return
+    }
 
+    capturedImage = File.createTempFile(
+      System.currentTimeMillis().toString(),
+      ".jpg",
+      context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    )
+
+    capturedImage?.let {
+      captureImageIntent.putExtra(
+        MediaStore.EXTRA_OUTPUT,
+        FileProvider.getUriForFile(requireContext(), "io.benreynolds.giffit.provider", it)
+      )
+
+      startActivityForResult(captureImageIntent, RC_CAPTURE_IMAGE)
+    }
   }
 
   private fun requestImageFromGallery() {
