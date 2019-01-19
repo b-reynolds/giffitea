@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Giffit</string>
+    <string name="app_name">Giffitea</string>
     <string name="reason_external_store_permissions">This app requires external storage permissions to allow you to select an image from your device.</string>
     <string name="button_retry_permission_request">OK</string>
     <string name="button_cancel_permission_request">Cancel</string>
     <string name="text_view_select_image">Select an image</string>
+    <string name="intro_text">Giffitea uses the magic of the internet to identify your photographs and show you related GIFs.\n\nAwesome right?</string>
+    <string name="button_take_photo">TAKE A SNAP</string>
+    <string name="content_description_logo">Logo</string>
 </resources>

@@ -3,9 +3,9 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/draculaCurrentLine</item>
-        <item name="colorPrimaryDark">@color/draculaCurrentLine</item>
-        <item name="colorAccent">@color/draculaRed</item>
+        <item name="colorPrimary">@color/giffiteaGreen</item>
+        <item name="colorPrimaryDark">@color/giffiteaDarkGreen</item>
+        <item name="colorAccent">@color/giffiteaGreen</item>
     </style>
 
 </resources>

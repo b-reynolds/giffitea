@@ -56,13 +56,13 @@ class ImageSelectionFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     if (requireContext().packageManager?.hasSystemFeature(PackageManager.FEATURE_CAMERA) != true) {
-      fabCamera.hide()
+//      fabCamera.hide()
     } else {
-      fabCamera.setOnClickListener { requestImageFromCamera() }
-      fabCamera.show()
+//      fabCamera.setOnClickListener { requestImageFromCamera() }
+//      fabCamera.show()
     }
 
-    fabGallery.setOnClickListener { requestImageFromGallery() }
+//    fabGallery.setOnClickListener { requestImageFromGallery() }
   }
 
   override fun onRequestPermissionsResult(
