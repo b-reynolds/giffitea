@@ -16,9 +16,15 @@ android {
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
+        debug {
+            buildConfigField 'String', 'GIPHY_API_KEY', giffitea_giphy_api_key
+            buildConfigField 'String', 'CLOUD_VISION_API_KEY', giffitea_cloud_vision_api_key
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'Giphy_API_Key', giffitea_giphy_api_key
+            buildConfigField 'String', 'Cloud_Vision_API_Key', giffitea_cloud_vision_api_key
         }
     }
 }
