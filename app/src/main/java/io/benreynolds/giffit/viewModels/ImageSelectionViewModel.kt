@@ -1,5 +1,6 @@
 package io.benreynolds.giffit.viewModels
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.benreynolds.giffit.BuildConfig
 import io.benreynolds.giffit.cloudVisionApi.services.CloudVisionApiService
@@ -29,20 +30,34 @@ private val cloudVisionApi: CloudVisionApiService by lazy {
 }
 
 class ImageSelectionViewModel : ViewModel() {
+    val loading: MutableLiveData<Boolean> = MutableLiveData()
+
+
     fun requestRandomGifForImage(
         imageFile: File,
         onSuccess: ((String) -> Unit)? = null,
         onFailure: ((GiffiteaError) -> (Unit))? = null
     ) {
+        loading.value = true
         requestImageAnnotation(
             imageFile,
             onSuccess = {
                 requestRandomGif(
                     it,
-                    onSuccess = { url -> onSuccess?.invoke(url) },
-                    onFailure = { error -> onFailure?.invoke(error) })
+                    onSuccess = { url ->
+                        onSuccess?.invoke(url)
+                        loading.value = false
+                    },
+                    onFailure = { error ->
+                        onFailure?.invoke(error)
+                        loading.value = false
+                    }
+                )
             },
-            onFailure = { error -> onFailure?.invoke(error) }
+            onFailure = { error ->
+                onFailure?.invoke(error)
+                loading.value = false
+            }
         )
     }
 
@@ -55,13 +70,17 @@ class ImageSelectionViewModel : ViewModel() {
             .enqueueKt(
                 onSuccess = { response ->
                     val url = response.body()?.gifObject?.images?.original?.url
+                    loading.value = false
                     if (url == null) {
                         onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                     } else {
                         onSuccess?.invoke(url)
                     }
                 },
-                onFailure = { onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE) }
+                onFailure = {
+                    loading.value = false
+                    onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
+                }
             )
     }
 
@@ -71,12 +90,14 @@ class ImageSelectionViewModel : ViewModel() {
         onFailure: ((GiffiteaError) -> Unit)? = null
     ) {
         if (!imageFile.isFile && !imageFile.canRead()) {
+            loading.value = false
             onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
             return
         }
 
         val encodedImage = imageFile.toBitmap()?.toBase64EncodedString()
         if (encodedImage == null) {
+            loading.value = false
             onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
             return
         }
@@ -93,13 +114,17 @@ class ImageSelectionViewModel : ViewModel() {
                         ?.firstOrNull()
                         ?.description
 
+                    loading.value = false
                     if (annotation == null) {
                         onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                     } else {
                         onSuccess?.invoke(annotation)
                     }
                 },
-                onFailure = { onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE) }
+                onFailure = {
+                    loading.value = false
+                    onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
+                }
             )
     }
 }
