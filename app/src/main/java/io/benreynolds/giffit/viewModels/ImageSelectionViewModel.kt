@@ -32,7 +32,6 @@ private val cloudVisionApi: CloudVisionApiService by lazy {
 class ImageSelectionViewModel : ViewModel() {
     val loading: MutableLiveData<Boolean> = MutableLiveData()
 
-
     fun requestRandomGifForImage(
         imageFile: File,
         onSuccess: ((String) -> Unit)? = null,
