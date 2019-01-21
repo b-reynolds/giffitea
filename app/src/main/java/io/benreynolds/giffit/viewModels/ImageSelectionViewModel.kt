@@ -12,81 +12,99 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 
-val giphyApi: GiphyApiService by lazy {
-  Retrofit.Builder()
-    .baseUrl("https://api.giphy.com")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-    .create(GiphyApiService::class.java)
+private val giphyApi: GiphyApiService by lazy {
+    Retrofit.Builder()
+        .baseUrl("https://api.giphy.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(GiphyApiService::class.java)
 }
 
-val cloudVisionApi: CloudVisionApiService by lazy {
-  Retrofit.Builder()
-    .baseUrl("https://vision.googleapis.com")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-    .create(CloudVisionApiService::class.java)
+private val cloudVisionApi: CloudVisionApiService by lazy {
+    Retrofit.Builder()
+        .baseUrl("https://vision.googleapis.com")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        .create(CloudVisionApiService::class.java)
 }
 
 class ImageSelectionViewModel : ViewModel() {
-  fun onImageSelected(imageFile: File, onGifRetrieved: (String) -> Unit) {
-    requestImageIdentity(
-      imageFile,
-      onSuccess = { identity ->
-        requestRandomGif(
-          identity,
-          onSuccess = { gifUrl ->
-            onGifRetrieved(gifUrl)
-          },
-          onFailure = {}
+    fun requestRandomGifForImage(
+        imageFile: File,
+        onSuccess: ((String) -> Unit)? = null,
+        onFailure: ((GiffiteaError) -> (Unit))? = null
+    ) {
+        requestImageAnnotation(
+            imageFile,
+            onSuccess = {
+                requestRandomGif(
+                    it,
+                    onSuccess = { url -> onSuccess?.invoke(url) },
+                    onFailure = { error -> onFailure?.invoke(error) })
+            },
+            onFailure = { error -> onFailure?.invoke(error) }
         )
-      },
-      onFailure = {}
-    )
-  }
-
-  private fun requestRandomGif(
-    searchQuery: String,
-    onSuccess: ((String) -> Unit)? = null,
-    onFailure: (() -> Unit)? = null
-  ) {
-    giphyApi.random(BuildConfig.GIPHY_API_KEY, searchQuery)
-      .enqueueKt(
-        onSuccess = { response ->
-          response.body()?.gifObject?.images?.original?.url?.let { gifUrl ->
-            onSuccess?.invoke(gifUrl)
-          } ?: onFailure?.invoke()
-        },
-        onFailure = { onFailure?.invoke() }
-      )
-  }
-
-  private fun requestImageIdentity(
-    imageFile: File,
-    onSuccess: ((String) -> Unit)? = null,
-    onFailure: (() -> Unit)? = null
-  ) {
-    if (!imageFile.isFile && !imageFile.canRead()) {
-      onFailure?.invoke()
-      return
     }
 
-    val encodedImage = imageFile.toBitmap()?.toBase64EncodedString()
-    if (encodedImage == null) {
-      onFailure?.invoke()
-      return
+    private fun requestRandomGif(
+        searchQuery: String,
+        onSuccess: ((String) -> Unit)? = null,
+        onFailure: ((GiffiteaError) -> Unit)? = null
+    ) {
+        giphyApi.random(BuildConfig.GIPHY_API_KEY, searchQuery)
+            .enqueueKt(
+                onSuccess = { response ->
+                    val url = response.body()?.gifObject?.images?.original?.url
+                    if (url == null) {
+                        onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
+                    } else {
+                        onSuccess?.invoke(url)
+                    }
+                },
+                onFailure = { onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE) }
+            )
     }
 
-    cloudVisionApi
-      .annotate(BuildConfig.CLOUD_VISION_API_KEY, encodedImage)
-      .enqueueKt(
-        onSuccess = { response ->
-          response.body()?.responses?.firstOrNull()?.labelAnnotations?.firstOrNull()
-            ?.description?.let { identity ->
-            onSuccess?.invoke(identity)
-          }
-        },
-        onFailure = { onFailure?.invoke() }
-      )
-  }
+    private fun requestImageAnnotation(
+        imageFile: File,
+        onSuccess: ((String) -> Unit)? = null,
+        onFailure: ((GiffiteaError) -> Unit)? = null
+    ) {
+        if (!imageFile.isFile && !imageFile.canRead()) {
+            onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
+            return
+        }
+
+        val encodedImage = imageFile.toBitmap()?.toBase64EncodedString()
+        if (encodedImage == null) {
+            onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
+            return
+        }
+
+        cloudVisionApi
+            .annotate(BuildConfig.CLOUD_VISION_API_KEY, encodedImage)
+            .enqueueKt(
+                onSuccess = { response ->
+                    val annotation = response
+                        .body()
+                        ?.responses
+                        ?.firstOrNull()
+                        ?.labelAnnotations
+                        ?.firstOrNull()
+                        ?.description
+
+                    if (annotation == null) {
+                        onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
+                    } else {
+                        onSuccess?.invoke(annotation)
+                    }
+                },
+                onFailure = { onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE) }
+            )
+    }
+}
+
+enum class GiffiteaError {
+    INVALID_API_RESPONSE,
+    INVALID_IMAGE_FILE
 }
