@@ -2,7 +2,6 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
     <color name="giffiteaDarkBackground">#2A2929</color>
     <color name="giffiteaLightText">#A4A4A4</color>
     <color name="giffiteaGreen">#7AA686</color>

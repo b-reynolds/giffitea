@@ -53,9 +53,11 @@ class ImageSelectionFragment : Fragment() {
             if (loading == true) {
                 ivGiffiteaLogo.visibility = ImageView.INVISIBLE
                 avLoadingSpinner.visibility = LottieAnimationView.VISIBLE
+                btCapturePhoto.isEnabled = false
             } else {
                 ivGiffiteaLogo.visibility = ImageView.VISIBLE
                 avLoadingSpinner.visibility = LottieAnimationView.INVISIBLE
+                btCapturePhoto.isEnabled = true
             }
         })
     }
