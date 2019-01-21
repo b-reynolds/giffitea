@@ -1,6 +1,9 @@
 package io.benreynolds.giffit.cloudVisionApi.services
 
+import io.benreynolds.giffit.cloudVisionApi.models.requests.AnnotateImageRequest
 import io.benreynolds.giffit.cloudVisionApi.models.requests.AnnotateRequests
+import io.benreynolds.giffit.cloudVisionApi.models.requests.Feature
+import io.benreynolds.giffit.cloudVisionApi.models.requests.Image
 import io.benreynolds.giffit.cloudVisionApi.models.responses.AnnotateResponses
 import retrofit2.Call
 import retrofit2.http.Body
@@ -21,4 +24,18 @@ interface CloudVisionApiService {
     @Query("key") apiKey: String,
     @Body annotateRequests: AnnotateRequests
   ): Call<AnnotateResponses>
+}
+
+fun CloudVisionApiService.annotate(apiKey: String, image: String): Call<AnnotateResponses> {
+  return annotate(
+    apiKey,
+    AnnotateRequests(
+      listOf(
+        AnnotateImageRequest(
+          Image(image),
+          listOf(Feature(Feature.LABEL_DETECTION, 1, "builtin/stable"))
+        )
+      )
+    )
+  )
 }
