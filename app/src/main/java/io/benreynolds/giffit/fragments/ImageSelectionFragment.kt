@@ -13,12 +13,13 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import io.benreynolds.giffit.R
 import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import java.io.File
 
-private const val RC_CAPTURE_IMAGE = 3
+private const val RC_CAPTURE_IMAGE = 1
 
 class ImageSelectionFragment : Fragment() {
   private lateinit var viewModel: ImageSelectionViewModel
@@ -50,7 +51,13 @@ class ImageSelectionFragment : Fragment() {
     super.onActivityResult(requestCode, resultCode, data)
 
     if (requestCode == RC_CAPTURE_IMAGE && resultCode == RESULT_OK) {
-      capturedImage?.let { viewModel.onImageSelected(it) }
+      capturedImage?.let {
+        viewModel.onImageSelected(it) {
+          Glide.with(requireContext())
+            .load(it)
+            .into(ivGiffiteaLogo)
+        }
+      }
     }
   }
 
