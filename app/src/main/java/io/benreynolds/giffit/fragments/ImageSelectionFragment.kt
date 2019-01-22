@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -19,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieAnimationView
 import com.bumptech.glide.Glide
 import io.benreynolds.giffit.R
+import io.benreynolds.giffit.viewModels.GiffiteaLoadingState
 import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import java.io.File
@@ -49,15 +51,35 @@ class ImageSelectionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         btCapturePhoto.setOnClickListener { requestImageFromCamera() }
-        viewModel.loading.observe(this, Observer<Boolean> { loading ->
-            if (loading == true) {
-                ivGiffiteaLogo.visibility = ImageView.INVISIBLE
-                avLoadingSpinner.visibility = LottieAnimationView.VISIBLE
-                btCapturePhoto.isEnabled = false
-            } else {
-                ivGiffiteaLogo.visibility = ImageView.VISIBLE
-                avLoadingSpinner.visibility = LottieAnimationView.INVISIBLE
-                btCapturePhoto.isEnabled = true
+        viewModel.loading.observe(this, Observer<GiffiteaLoadingState> { state ->
+            when (state) {
+                GiffiteaLoadingState.IDENTIFYING_IMAGE -> {
+                    btCapturePhoto.isEnabled = false
+                    ivGiffiteaLogo.visibility = ImageView.INVISIBLE
+
+                    tvLoadingText.setText(R.string.identifying_image)
+
+                    avLoadingSpinner.visibility = LottieAnimationView.VISIBLE
+                    tvLoadingText.visibility = TextView.VISIBLE
+                }
+                GiffiteaLoadingState.RETRIEVING_GIF -> {
+                    btCapturePhoto.isEnabled = false
+                    ivGiffiteaLogo.visibility = ImageView.INVISIBLE
+
+                    tvLoadingText.setText(R.string.searching_for_gif)
+
+                    avLoadingSpinner.visibility = LottieAnimationView.VISIBLE
+                    tvLoadingText.visibility = TextView.VISIBLE
+                }
+                else -> {
+                    avLoadingSpinner.visibility = LottieAnimationView.INVISIBLE
+                    tvLoadingText.visibility = TextView.INVISIBLE
+
+                    tvLoadingText.text = ""
+
+                    btCapturePhoto.isEnabled = true
+                    ivGiffiteaLogo.visibility = ImageView.VISIBLE
+                }
             }
         })
     }

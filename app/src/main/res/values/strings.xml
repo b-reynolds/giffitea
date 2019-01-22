@@ -7,4 +7,6 @@
     <string name="intro_text">Giffitea uses the magic of the internet to identify your photographs and show you related GIFs.\n\nAwesome right?</string>
     <string name="button_take_photo">TAKE A SNAP</string>
     <string name="content_description_logo">Logo</string>
+    <string name="searching_for_gif">Finding the perfect GIF…</string>
+    <string name="identifying_image">Identifying image…</string>
 </resources>
