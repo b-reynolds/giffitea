@@ -30,14 +30,13 @@ private val cloudVisionApi: CloudVisionApiService by lazy {
 }
 
 class ImageSelectionViewModel : ViewModel() {
-    val loading: MutableLiveData<Boolean> = MutableLiveData()
+    val loading: MutableLiveData<GiffiteaLoadingState> = MutableLiveData()
 
     fun requestRandomGifForImage(
         imageFile: File,
         onSuccess: ((String) -> Unit)? = null,
         onFailure: ((GiffiteaError) -> (Unit))? = null
     ) {
-        loading.value = true
         requestImageAnnotation(
             imageFile,
             onSuccess = {
@@ -45,17 +44,17 @@ class ImageSelectionViewModel : ViewModel() {
                     it,
                     onSuccess = { url ->
                         onSuccess?.invoke(url)
-                        loading.value = false
+                        loading.value = GiffiteaLoadingState.DONE
                     },
                     onFailure = { error ->
                         onFailure?.invoke(error)
-                        loading.value = false
+                        loading.value = GiffiteaLoadingState.DONE
                     }
                 )
             },
             onFailure = { error ->
                 onFailure?.invoke(error)
-                loading.value = false
+                loading.value =  GiffiteaLoadingState.DONE
             }
         )
     }
@@ -65,11 +64,12 @@ class ImageSelectionViewModel : ViewModel() {
         onSuccess: ((String) -> Unit)? = null,
         onFailure: ((GiffiteaError) -> Unit)? = null
     ) {
+        loading.value = GiffiteaLoadingState.RETRIEVING_GIF
         giphyApi.random(BuildConfig.GIPHY_API_KEY, searchQuery)
             .enqueueKt(
                 onSuccess = { response ->
                     val url = response.body()?.gifObject?.images?.original?.url
-                    loading.value = false
+                    loading.value = GiffiteaLoadingState.DONE
                     if (url == null) {
                         onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                     } else {
@@ -77,7 +77,7 @@ class ImageSelectionViewModel : ViewModel() {
                     }
                 },
                 onFailure = {
-                    loading.value = false
+                    loading.value = GiffiteaLoadingState.DONE
                     onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                 }
             )
@@ -88,15 +88,16 @@ class ImageSelectionViewModel : ViewModel() {
         onSuccess: ((String) -> Unit)? = null,
         onFailure: ((GiffiteaError) -> Unit)? = null
     ) {
+        loading.value = GiffiteaLoadingState.IDENTIFYING_IMAGE
         if (!imageFile.isFile && !imageFile.canRead()) {
-            loading.value = false
+            loading.value = GiffiteaLoadingState.DONE
             onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
             return
         }
 
         val encodedImage = imageFile.toBitmap()?.toBase64EncodedString()
         if (encodedImage == null) {
-            loading.value = false
+            loading.value = GiffiteaLoadingState.DONE
             onFailure?.invoke(GiffiteaError.INVALID_IMAGE_FILE)
             return
         }
@@ -113,7 +114,7 @@ class ImageSelectionViewModel : ViewModel() {
                         ?.firstOrNull()
                         ?.description
 
-                    loading.value = false
+                    loading.value = GiffiteaLoadingState.DONE
                     if (annotation == null) {
                         onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                     } else {
@@ -121,7 +122,7 @@ class ImageSelectionViewModel : ViewModel() {
                     }
                 },
                 onFailure = {
-                    loading.value = false
+                    loading.value = GiffiteaLoadingState.DONE
                     onFailure?.invoke(GiffiteaError.INVALID_API_RESPONSE)
                 }
             )
@@ -131,4 +132,10 @@ class ImageSelectionViewModel : ViewModel() {
 enum class GiffiteaError {
     INVALID_API_RESPONSE,
     INVALID_IMAGE_FILE
+}
+
+enum class GiffiteaLoadingState {
+    IDENTIFYING_IMAGE,
+    RETRIEVING_GIF,
+    DONE
 }
