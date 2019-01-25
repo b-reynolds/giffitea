@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.giphyApi.models.responses
+package io.benreynolds.giffit.giphyapi.models.responses
 
 import com.google.gson.annotations.SerializedName
 
@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
  * @property gifObject contains URLs for GIFs in many different formats and sizes.
  */
 data class RandomResponse(
-  @SerializedName("data")
-  val gifObject: GifObject? = null
+    @SerializedName("data")
+    val gifObject: GifObject? = null
 )

@@ -21,9 +21,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import io.benreynolds.giffit.R
-import io.benreynolds.giffit.viewModels.GiffiteaError
-import io.benreynolds.giffit.viewModels.GiffiteaLoadingState
-import io.benreynolds.giffit.viewModels.ImageSelectionViewModel
+import io.benreynolds.giffit.viewmodels.GiffiteaError
+import io.benreynolds.giffit.viewmodels.GiffiteaLoadingState
+import io.benreynolds.giffit.viewmodels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import timber.log.Timber
 import java.io.File
@@ -96,8 +96,19 @@ class ImageSelectionFragment : Fragment() {
         )
     }
 
-    private fun onGifRetrieved(url: String) {
-        // TODO: Display GIF.
+    private fun onGifRetrieved(gifUrl: String) {
+        Timber.d("GIF received, starting GifDisplayFragment...")
+
+        val gifDisplayFragment = GifDisplayFragment().apply {
+            arguments = Bundle().apply {
+                putString("URL", gifUrl)
+            }
+        }
+
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.clRoot, gifDisplayFragment)
+            ?.addToBackStack(null)
+            ?.commit()
     }
 
     private fun onGifRetrievalFailed(giffiteaError: GiffiteaError) {

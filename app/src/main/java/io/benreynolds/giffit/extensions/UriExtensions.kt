@@ -10,16 +10,16 @@ import java.io.File
  * `null`.
  */
 fun Uri.getFile(context: Context): File? {
-  context
-    .contentResolver
-    ?.query(this, null, null, null, null)
-    ?.use { cursor ->
-      cursor.moveToFirst()
-      val columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-      return if (columnIndex == -1) {
-        null
-      } else {
-        File(cursor.getString(columnIndex))
-      }
-    } ?: return File(path)
+    context
+        .contentResolver
+        ?.query(this, null, null, null, null)
+        ?.use { cursor ->
+            cursor.moveToFirst()
+            val columnIndex = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            return if (columnIndex == -1) {
+                null
+            } else {
+                File(cursor.getString(columnIndex))
+            }
+        } ?: return File(path)
 }

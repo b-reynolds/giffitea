@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.cloudVisionApi.models.responses
+package io.benreynolds.giffit.cloudvisionapi.models.responses
 
 /**
  * Response to a batch image annotation request.
