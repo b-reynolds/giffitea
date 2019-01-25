@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.cloudVisionApi.models.requests
+package io.benreynolds.giffit.cloudvisionapi.models.requests
 
 /**
  * Client image to perform Google Cloud Vision API tasks over.

@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.giphyApi.models.responses
+package io.benreynolds.giffit.giphyapi.models.responses
 
 /**
  * Data surrounding the original version of this GIF.

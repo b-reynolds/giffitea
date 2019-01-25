@@ -1,6 +1,6 @@
-package io.benreynolds.giffit.giphyApi.services
+package io.benreynolds.giffit.giphyapi.services
 
-import io.benreynolds.giffit.giphyApi.models.responses.RandomResponse
+import io.benreynolds.giffit.giphyapi.models.responses.RandomResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

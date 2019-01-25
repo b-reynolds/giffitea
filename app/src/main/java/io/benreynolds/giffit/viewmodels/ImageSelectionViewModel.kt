@@ -1,14 +1,14 @@
-package io.benreynolds.giffit.viewModels
+package io.benreynolds.giffit.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.benreynolds.giffit.BuildConfig
-import io.benreynolds.giffit.cloudVisionApi.services.CloudVisionApiService
-import io.benreynolds.giffit.cloudVisionApi.services.annotate
+import io.benreynolds.giffit.cloudvisionapi.services.CloudVisionApiService
+import io.benreynolds.giffit.cloudvisionapi.services.annotate
 import io.benreynolds.giffit.extensions.enqueueKt
 import io.benreynolds.giffit.extensions.toBase64EncodedString
 import io.benreynolds.giffit.extensions.toBitmap
-import io.benreynolds.giffit.giphyApi.services.GiphyApiService
+import io.benreynolds.giffit.giphyapi.services.GiphyApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File

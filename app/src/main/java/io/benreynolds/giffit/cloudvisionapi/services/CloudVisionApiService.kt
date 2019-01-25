@@ -1,10 +1,10 @@
-package io.benreynolds.giffit.cloudVisionApi.services
+package io.benreynolds.giffit.cloudvisionapi.services
 
-import io.benreynolds.giffit.cloudVisionApi.models.requests.AnnotateImageRequest
-import io.benreynolds.giffit.cloudVisionApi.models.requests.AnnotateRequests
-import io.benreynolds.giffit.cloudVisionApi.models.requests.Feature
-import io.benreynolds.giffit.cloudVisionApi.models.requests.Image
-import io.benreynolds.giffit.cloudVisionApi.models.responses.AnnotateResponses
+import io.benreynolds.giffit.cloudvisionapi.models.requests.AnnotateImageRequest
+import io.benreynolds.giffit.cloudvisionapi.models.requests.AnnotateRequests
+import io.benreynolds.giffit.cloudvisionapi.models.requests.Feature
+import io.benreynolds.giffit.cloudvisionapi.models.requests.Image
+import io.benreynolds.giffit.cloudvisionapi.models.responses.AnnotateResponses
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.giphyApi.models.responses
+package io.benreynolds.giffit.giphyapi.models.responses
 
 /**
  * Contains a variety of information, including the [images] object, which contains URLs for GIFs in

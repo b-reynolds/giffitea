@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.cloudVisionApi.models.requests
+package io.benreynolds.giffit.cloudvisionapi.models.requests
 
 /**
  * Type of Google Cloud Vision API detection to perform, and the maximum number of results to return

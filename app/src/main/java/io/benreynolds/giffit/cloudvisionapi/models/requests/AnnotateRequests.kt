@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.cloudVisionApi.models.requests
+package io.benreynolds.giffit.cloudvisionapi.models.requests
 
 /**
  * Request body for the Google Vision API annotate method.

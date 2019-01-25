@@ -1,6 +1,6 @@
-package io.benreynolds.giffit.cloudVisionApi.models.responses
+package io.benreynolds.giffit.cloudvisionapi.models.responses
 
-import io.benreynolds.giffit.cloudVisionApi.models.requests.AnnotateImageRequest
+import io.benreynolds.giffit.cloudvisionapi.models.requests.AnnotateImageRequest
 
 /**
  * AnnotateResponses to an [AnnotateImageRequest].

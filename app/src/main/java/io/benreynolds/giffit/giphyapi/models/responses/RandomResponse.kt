@@ -1,4 +1,4 @@
-package io.benreynolds.giffit.giphyApi.models.responses
+package io.benreynolds.giffit.giphyapi.models.responses
 
 import com.google.gson.annotations.SerializedName
 
