@@ -14,28 +14,28 @@ import retrofit2.http.Query
  * Defines methods that interact with the Google's Cloud Vision API.
  */
 interface CloudVisionApiService {
-  /**
-   * Run image detection and annotation for a batch of images.
-   *
-   * @param annotateRequests Individual image annotation annotateRequests for this batch.
-   */
-  @POST("/v1/images:annotate")
-  fun annotate(
-    @Query("key") apiKey: String,
-    @Body annotateRequests: AnnotateRequests
-  ): Call<AnnotateResponses>
+    /**
+     * Run image detection and annotation for a batch of images.
+     *
+     * @param annotateRequests Individual image annotation annotateRequests for this batch.
+     */
+    @POST("/v1/images:annotate")
+    fun annotate(
+        @Query("key") apiKey: String,
+        @Body annotateRequests: AnnotateRequests
+    ): Call<AnnotateResponses>
 }
 
 fun CloudVisionApiService.annotate(apiKey: String, image: String): Call<AnnotateResponses> {
-  return annotate(
-    apiKey,
-    AnnotateRequests(
-      listOf(
-        AnnotateImageRequest(
-          Image(image),
-          listOf(Feature(Feature.LABEL_DETECTION, 1, "builtin/stable"))
+    return annotate(
+        apiKey,
+        AnnotateRequests(
+            listOf(
+                AnnotateImageRequest(
+                    Image(image),
+                    listOf(Feature(Feature.LABEL_DETECTION, 1, "builtin/stable"))
+                )
+            )
         )
-      )
     )
-  )
 }

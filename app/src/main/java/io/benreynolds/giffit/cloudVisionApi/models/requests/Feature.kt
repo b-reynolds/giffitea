@@ -10,13 +10,13 @@ package io.benreynolds.giffit.cloudVisionApi.models.requests
  * unset) and "builtin/latest".
  */
 data class Feature(val type: String, val maxResults: Int, val model: String) {
-  /**
-   * Type of Google Cloud Vision API feature to be extracted.
-   */
-  companion object Type {
     /**
-     * Unspecified feature type.
+     * Type of Google Cloud Vision API feature to be extracted.
      */
-    const val LABEL_DETECTION = "LABEL_DETECTION"
-  }
+    companion object Type {
+        /**
+         * Unspecified feature type.
+         */
+        const val LABEL_DETECTION = "LABEL_DETECTION"
+    }
 }

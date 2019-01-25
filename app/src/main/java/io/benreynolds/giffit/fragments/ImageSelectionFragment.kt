@@ -96,8 +96,19 @@ class ImageSelectionFragment : Fragment() {
         )
     }
 
-    private fun onGifRetrieved(url: String) {
-        // TODO: Display GIF.
+    private fun onGifRetrieved(gifUrl: String) {
+        Timber.d("GIF received, starting GifDisplayFragment...")
+
+        val gifDisplayFragment = GifDisplayFragment().apply {
+            arguments = Bundle().apply {
+                putString("URL", gifUrl)
+            }
+        }
+
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.clRoot, gifDisplayFragment)
+            ?.addToBackStack(null)
+            ?.commit()
     }
 
     private fun onGifRetrievalFailed(giffiteaError: GiffiteaError) {

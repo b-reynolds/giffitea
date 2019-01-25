@@ -8,6 +8,6 @@ import com.google.gson.annotations.SerializedName
  * @property gifObject contains URLs for GIFs in many different formats and sizes.
  */
 data class RandomResponse(
-  @SerializedName("data")
-  val gifObject: GifObject? = null
+    @SerializedName("data")
+    val gifObject: GifObject? = null
 )

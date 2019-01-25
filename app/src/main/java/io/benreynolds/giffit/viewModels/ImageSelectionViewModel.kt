@@ -54,7 +54,7 @@ class ImageSelectionViewModel : ViewModel() {
             },
             onFailure = { error ->
                 onFailure?.invoke(error)
-                loading.value =  GiffiteaLoadingState.DONE
+                loading.value = GiffiteaLoadingState.DONE
             }
         )
     }
