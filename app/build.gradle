@@ -1,8 +1,11 @@
+plugins {
+    id 'io.gitlab.arturbosch.detekt' version '1.0.0-RC12'
+}
+
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.gitlab.arturbosch.detekt'
 
 android {
     compileSdkVersion 28
@@ -30,6 +33,15 @@ android {
             buildConfigField("String", "CLOUD_VISION_API_KEY", giffitea_cloud_vision_api_key)
         }
     }
+
+    repositories {
+        jcenter()
+    }
+}
+
+detekt {
+    input = files("src/main/java")
+    filters = ".*/resources/.*,.*/build/.*"
 }
 
 dependencies {
