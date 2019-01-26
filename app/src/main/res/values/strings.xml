@@ -12,4 +12,5 @@
 
     <string name="status_identifying_image">Identifying image…</string>
     <string name="status_searching_for_gif">Finding the perfect GIF…</string>
+    <string name="status_downloading_gif">Downloading GIF...</string>
 </resources>
