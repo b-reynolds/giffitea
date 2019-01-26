@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -20,6 +19,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
+import com.airbnb.lottie.LottieAnimationView
 import io.benreynolds.giffit.R
 import io.benreynolds.giffit.viewmodels.GiffiteaError
 import io.benreynolds.giffit.viewmodels.GiffiteaLoadingState
@@ -83,9 +83,11 @@ class ImageSelectionFragment : Fragment() {
     private fun onLoadingStateChanged(loadingState: GiffiteaLoadingState) {
         val isLoading = loadingState != GiffiteaLoadingState.DONE
 
-        showLoadingAnimation(isLoading)
-        showGiffiteaLogo(!isLoading)
-        showCaptureButton(!isLoading)
+        if (isLoading) {
+            setCaptureButtonState(false)
+            showGiffiteaLogo(false)
+            showLoadingAnimation(true)
+        }
 
         setStatusText(
             when (loadingState) {
@@ -112,6 +114,8 @@ class ImageSelectionFragment : Fragment() {
     }
 
     private fun onGifRetrievalFailed(giffiteaError: GiffiteaError) {
+        showGiffiteaLogo(true)
+        setCaptureButtonState(true)
         Timber.e("GIF retrieval failed due to '${giffiteaError.name}', showing error dialog..")
         MaterialDialog(requireContext()).show {
             message(R.string.error_request_failed)
@@ -161,7 +165,8 @@ class ImageSelectionFragment : Fragment() {
 
     private fun showLoadingAnimation(visible: Boolean) {
         Timber.d("${if (visible) "Displaying" else "Hiding"} loading animation...")
-        tvStatus.visibility = if (visible) TextView.VISIBLE else TextView.INVISIBLE
+        avLoadingSpinner.visibility =
+            if (visible) LottieAnimationView.VISIBLE else LottieAnimationView.INVISIBLE
     }
 
     private fun showGiffiteaLogo(visible: Boolean) {
@@ -169,8 +174,8 @@ class ImageSelectionFragment : Fragment() {
         ivGiffiteaLogo.visibility = if (visible) ImageView.VISIBLE else ImageView.INVISIBLE
     }
 
-    private fun showCaptureButton(visible: Boolean) {
-        Timber.d("${if (visible) "Displaying" else "Hiding"} capture button...")
-        btCaptureImage.visibility = if (visible) Button.VISIBLE else Button.INVISIBLE
+    private fun setCaptureButtonState(interactable: Boolean) {
+        Timber.d("${if (interactable) "Enabling" else "Disabling"} capture button...")
+        btCaptureImage.isEnabled = interactable
     }
 }
