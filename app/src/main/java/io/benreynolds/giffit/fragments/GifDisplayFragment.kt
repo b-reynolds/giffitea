@@ -1,9 +1,7 @@
 package io.benreynolds.giffit.fragments
 
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,13 +19,11 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import io.benreynolds.giffit.R
+import io.benreynolds.giffit.enums.GiffiteaError
 import io.benreynolds.giffit.viewmodels.GifDisplayViewModel
-import io.benreynolds.giffit.viewmodels.GiffiteaError
 import kotlinx.android.synthetic.main.fragment_gif_display.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
 

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import io.benreynolds.giffit.BuildConfig
 import io.benreynolds.giffit.cloudvisionapi.services.CloudVisionApiService
 import io.benreynolds.giffit.cloudvisionapi.services.annotate
+import io.benreynolds.giffit.enums.GiffiteaError
+import io.benreynolds.giffit.enums.GiffiteaLoadingState
 import io.benreynolds.giffit.extensions.enqueueKt
 import io.benreynolds.giffit.extensions.toBase64EncodedString
 import io.benreynolds.giffit.extensions.toBitmap
@@ -127,16 +129,4 @@ class ImageSelectionViewModel : ViewModel() {
                 }
             )
     }
-}
-
-enum class GiffiteaError {
-    INVALID_API_RESPONSE,
-    INVALID_IMAGE_FILE,
-    DOWNLOAD_FAILED
-}
-
-enum class GiffiteaLoadingState {
-    IDENTIFYING_IMAGE,
-    RETRIEVING_GIF,
-    DONE
 }

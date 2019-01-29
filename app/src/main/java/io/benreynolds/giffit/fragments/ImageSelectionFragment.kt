@@ -25,8 +25,8 @@ import androidx.lifecycle.ViewModelProviders
 import com.afollestad.materialdialogs.MaterialDialog
 import com.airbnb.lottie.LottieAnimationView
 import io.benreynolds.giffit.R
-import io.benreynolds.giffit.viewmodels.GiffiteaError
-import io.benreynolds.giffit.viewmodels.GiffiteaLoadingState
+import io.benreynolds.giffit.enums.GiffiteaError
+import io.benreynolds.giffit.enums.GiffiteaLoadingState
 import io.benreynolds.giffit.viewmodels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import timber.log.Timber

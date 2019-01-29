@@ -2,6 +2,7 @@ package io.benreynolds.giffit.viewmodels
 
 import android.os.Environment
 import androidx.lifecycle.ViewModel
+import io.benreynolds.giffit.enums.GiffiteaError
 import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileOutputStream
