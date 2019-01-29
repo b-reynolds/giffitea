@@ -1,12 +1,13 @@
 package io.benreynolds.giffit.fragments
 
 import android.content.Context
+import android.content.Intent
+import android.content.Intent.ACTION_SEND
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.TextView
 import androidx.annotation.StringRes
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
@@ -29,6 +30,7 @@ import java.io.File
 
 class GifDisplayFragment : Fragment() {
     private lateinit var viewModel: GifDisplayViewModel
+    private var gifFile: File? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,13 +43,46 @@ class GifDisplayFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
 
+        setHasOptionsMenu(true)
         with(context as FragmentActivity) {
             viewModel = ViewModelProviders.of(this).get(GifDisplayViewModel::class.java)
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, menuInflater)
+
+        menuInflater.inflate(R.menu.gif_display_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        when (menuItem.itemId) {
+            R.id.menu_item_share -> {
+                gifFile?.let { gifFile ->
+                    Intent(ACTION_SEND).apply {
+                        type = "image/*"
+                        putExtra(
+                            Intent.EXTRA_STREAM,
+                            FileProvider.getUriForFile(
+                                requireContext(),
+                                "io.benreynolds.giffit.provider",
+                                gifFile
+                            )
+                        )
+                    }
+                }?.also {
+                    startActivity(Intent.createChooser(it, "Share GIF"))
+                }
+            }
+            else -> super.onOptionsItemSelected(menuItem)
+        }
+
+        return true
+    }
+
     private fun onGifDownloaded(gifFile: File) {
         requireActivity().runOnUiThread {
+            this.gifFile = gifFile
             Glide.with(requireActivity())
                 .asGif()
                 .load(gifFile)

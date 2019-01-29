@@ -167,7 +167,6 @@ class ImageSelectionFragment : Fragment() {
 
 
         Timber.d("Requesting image from camera...")
-
         val context = requireContext()
         val captureImageIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         if (captureImageIntent.resolveActivity(context.packageManager) == null) {

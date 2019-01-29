@@ -4,6 +4,7 @@
 
     <string name="button_capture_image">Take a snap</string>
     <string name="button_ok">OK</string>
+    <string name="button_share">Share</string>
 
     <string name="content_description_logo">Logo</string>
 
@@ -15,5 +16,5 @@
 
     <string name="status_identifying_image">Identifying image…</string>
     <string name="status_searching_for_gif">Finding the perfect GIF…</string>
-    <string name="status_downloading_gif">Downloading GIF...</string>
+    <string name="status_downloading_gif">Downloading GIF…</string>
 </resources>
