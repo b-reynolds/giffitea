@@ -10,6 +10,8 @@
     <string name="error_no_activity_available">Oops, it looks like your device doesn\'t have an app that can capture photographs :(</string>
     <string name="error_request_failed">Apologies, Giffitea is having a bit of trouble working his magic right now. Please check your internet connection or try again later.</string>
 
+    <string name="justification_write_external_storage">Ooops, Giffitea requires external storage permissions to save GIFs to your device.</string>
+
     <string name="status_identifying_image">Identifying image…</string>
     <string name="status_searching_for_gif">Finding the perfect GIF…</string>
     <string name="status_downloading_gif">Downloading GIF...</string>

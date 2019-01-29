@@ -1,9 +1,13 @@
 package io.benreynolds.giffit.fragments
 
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_DENIED
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -27,19 +31,16 @@ import io.benreynolds.giffit.viewmodels.ImageSelectionViewModel
 import kotlinx.android.synthetic.main.fragment_image_selection.*
 import timber.log.Timber
 import java.io.File
+import kotlin.properties.Delegates.observable
 
 private const val RC_CAPTURE_IMAGE = 1
+private const val RC_WRITE_EXTERNAL_STORAGE = 2
 
 class ImageSelectionFragment : Fragment() {
     private lateinit var viewModel: ImageSelectionViewModel
     private var capturedImage: File? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-        with(context as FragmentActivity) {
-            viewModel = ViewModelProviders.of(this).get(ImageSelectionViewModel::class.java)
-        }
+    private var hasExternalStoragePermissions: Boolean by observable(false) { _, _, hasPermission ->
+        onExternalStoragePermissionsChanged(hasPermission)
     }
 
     override fun onCreateView(
@@ -75,8 +76,40 @@ class ImageSelectionFragment : Fragment() {
                         )
                     } ?: Timber.w("Image was captured but null")
                 }
-
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        results: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, results)
+
+        when (requestCode) {
+            RC_WRITE_EXTERNAL_STORAGE -> {
+                hasExternalStoragePermissions = results.firstOrNull() == PackageManager.PERMISSION_GRANTED
+            }
+        }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        with(context as FragmentActivity) {
+            viewModel = ViewModelProviders.of(this).get(ImageSelectionViewModel::class.java)
+        }
+    }
+
+    private fun onExternalStoragePermissionsChanged(hasPermission: Boolean) {
+        if (!hasPermission) {
+            MaterialDialog(requireContext()).show {
+                message(R.string.justification_write_external_storage)
+                positiveButton(R.string.button_ok)
+            }
+        } else {
+            sendImageCaptureRequest()
         }
     }
 
@@ -124,6 +157,15 @@ class ImageSelectionFragment : Fragment() {
     }
 
     private fun sendImageCaptureRequest() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && requireContext().checkSelfPermission(
+                WRITE_EXTERNAL_STORAGE
+            ) == PERMISSION_DENIED
+        ) {
+            requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), RC_WRITE_EXTERNAL_STORAGE)
+            return
+        }
+
+
         Timber.d("Requesting image from camera...")
 
         val context = requireContext()
@@ -166,7 +208,7 @@ class ImageSelectionFragment : Fragment() {
     private fun showLoadingAnimation(visible: Boolean) {
         Timber.d("${if (visible) "Displaying" else "Hiding"} loading animation...")
         avLoadingSpinner.visibility =
-            if (visible) LottieAnimationView.VISIBLE else LottieAnimationView.INVISIBLE
+                if (visible) LottieAnimationView.VISIBLE else LottieAnimationView.INVISIBLE
     }
 
     private fun showGiffiteaLogo(visible: Boolean) {
