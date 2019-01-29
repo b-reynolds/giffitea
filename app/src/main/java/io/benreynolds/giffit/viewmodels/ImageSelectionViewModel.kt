@@ -131,7 +131,8 @@ class ImageSelectionViewModel : ViewModel() {
 
 enum class GiffiteaError {
     INVALID_API_RESPONSE,
-    INVALID_IMAGE_FILE
+    INVALID_IMAGE_FILE,
+    DOWNLOAD_FAILED
 }
 
 enum class GiffiteaLoadingState {

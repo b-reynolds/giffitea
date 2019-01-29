@@ -7,6 +7,7 @@
 
     <string name="content_description_logo">Logo</string>
 
+    <string name="error_download_failed">Oops, Giffitea was unable to download that GIF. Please check your internet connection or try again later.</string>
     <string name="error_no_activity_available">Oops, it looks like your device doesn\'t have an app that can capture photographs :(</string>
     <string name="error_request_failed">Apologies, Giffitea is having a bit of trouble working his magic right now. Please check your internet connection or try again later.</string>
 
